@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>A Very Important Owl ✨</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root{
+    --ink:#241b2f;
+    --cream:#fff8e8;
+    --gold:#d7a83d;
+    --gold2:#f4d77d;
+    --purple:#35204d;
+    --purple2:#5b3479;
+    --pink:#d86b8c;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family:Inter,system-ui,sans-serif;
+    color:var(--ink);
+    overflow-x:hidden;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(244,215,125,.18) 0 2px, transparent 3px),
+      radial-gradient(circle at 80% 35%, rgba(255,255,255,.16) 0 1px, transparent 2px),
+      linear-gradient(135deg,#241431,#3c2458 48%,#1d1229);
+    position:relative;
+  }
+
+  .stars{position:fixed;inset:0;pointer-events:none;opacity:.7}
+  .stars span{
+    position:absolute;width:3px;height:3px;border-radius:50%;
+    background:#fff8c9;box-shadow:0 0 9px #fff8c9;
+    animation:twinkle 2.5s infinite alternate;
+  }
+  @keyframes twinkle{from{opacity:.2;transform:scale(.7)}to{opacity:1;transform:scale(1.3)}}
+
+  .wrap{min-height:100vh;display:grid;place-items:center;padding:28px 18px}
+  .card{
+    width:min(680px,100%);
+    background:linear-gradient(145deg,rgba(255,248,232,.97),rgba(255,241,205,.96));
+    border:2px solid var(--gold);
+    border-radius:28px;
+    padding:34px;
+    box-shadow:0 30px 80px rgba(0,0,0,.45), inset 0 0 0 7px rgba(215,168,61,.08);
+    text-align:center;
+    position:relative;
+  }
+  .crest{font-size:54px;filter:drop-shadow(0 4px 4px rgba(0,0,0,.2));margin-bottom:2px}
+  .eyebrow{
+    font-size:12px;letter-spacing:2.5px;text-transform:uppercase;
+    color:#795b1d;font-weight:700;margin:0 0 10px
+  }
+  h1{
+    font-family:Cinzel,Georgia,serif;
+    font-size:clamp(28px,6vw,46px);line-height:1.1;
+    margin:0 0 14px;color:#2b173c;
+  }
+  .subtitle{font-size:17px;line-height:1.65;margin:0 auto 25px;max-width:540px}
+  .tiny{font-size:12px;opacity:.68;margin-top:16px}
+  .buttons{display:flex;justify-content:center;gap:18px;min-height:58px;position:relative;margin-top:12px}
+  button{
+    border:0;border-radius:999px;padding:15px 30px;font-size:16px;font-weight:700;
+    cursor:pointer;transition:transform .18s,box-shadow .18s;
+  }
+  #yes{
+    color:#fff;background:linear-gradient(135deg,#6d3b91,#3d2258);
+    box-shadow:0 8px 22px rgba(61,34,88,.28);
+  }
+  #yes:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 13px 28px rgba(61,34,88,.35)}
+  #no{
+    background:#eee1e9;color:#69586a;position:relative;
+    transition:left .12s ease,top .12s ease,transform .12s ease;
+  }
+
+  .letter{margin:20px auto 0;max-width:560px;text-align:left;border-top:1px solid rgba(121,91,29,.25);padding-top:20px}
+  .letter p{margin:8px 0;line-height:1.55}
+
+  .hidden{display:none!important}
+
+  .modal{
+    position:fixed;inset:0;background:rgba(15,8,24,.72);backdrop-filter:blur(7px);
+    display:grid;place-items:center;padding:18px;z-index:10;
+  }
+  .modal-card{
+    width:min(720px,100%);max-height:92vh;overflow:auto;
+    background:var(--cream);border:2px solid var(--gold);border-radius:26px;
+    padding:28px;box-shadow:0 30px 90px rgba(0,0,0,.55);text-align:center;
+  }
+  .modal-card h2{font-family:Cinzel,Georgia,serif;color:#2b173c;font-size:30px;margin:4px 0 8px}
+  .modal-card .lead{margin:0 0 20px;color:#5a4b59}
+  .choices{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;text-align:left}
+  .choice{
+    background:#fffdf6;border:1px solid #e6cc82;border-radius:16px;padding:14px;
+    cursor:pointer;transition:.18s;
+  }
+  .choice:hover{transform:translateY(-2px);border-color:#b88a28;box-shadow:0 7px 16px rgba(80,50,10,.08)}
+  .choice.selected{outline:3px solid rgba(216,107,140,.28);border-color:var(--pink);background:#fff6f8}
+  .choice strong{display:block;margin-bottom:4px;color:#3d2258}
+  .choice span{font-size:13px;color:#6e6270}
+  .times{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:18px 0}
+  .time{
+    padding:11px;border:1px solid #dfca98;background:#fffdf6;border-radius:12px;cursor:pointer;
+    font-weight:600
+  }
+  .time.selected{background:#3d2258;color:#fff;border-color:#3d2258}
+  .confirm{
+    width:100%;margin-top:8px;background:linear-gradient(135deg,#b84f73,#6d3b91);color:white;
+    box-shadow:0 9px 22px rgba(109,59,145,.2)
+  }
+  .confirm:disabled{opacity:.45;cursor:not-allowed}
+  .success{
+    padding:8px 5px 3px;
+  }
+  .success .big{font-size:60px;margin:5px}
+  .success h2{margin-top:4px}
+  .details{
+    background:#fffdf6;border:1px dashed #c69d3b;border-radius:15px;padding:15px;margin:16px 0;
+    line-height:1.7
+  }
+  .close{background:transparent;color:#6d3b91;padding:10px 16px}
+  .wand{font-size:22px;display:inline-block;animation:wiggle 1.8s infinite}
+  @keyframes wiggle{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
+
+  @media(max-width:560px){
+    .card{padding:26px 19px}
+    .choices{grid-template-columns:1fr}
+    .times{grid-template-columns:repeat(2,1fr)}
+  }
+</style>
+<!-- Notification setup: connect NOTIFY_URL to the deployed Apps Script Web App. -->
+</head>
+<body>
+<div class="stars" aria-hidden="true"></div>
+
+<main class="wrap">
+  <section class="card" id="mainCard">
+    <div class="crest">🦉</div>
+    <p class="eyebrow">Ministry of Magic — Extremely Important Owl</p>
+    <h1>Riya, will you go on a date with me?</h1>
+    <p class="subtitle">
+      An owl has delivered a highly classified romantic proposal.
+      The Department of Mysteries has reviewed it and, after extensive investigation,
+      has concluded that I am <b>very much into you</b>. ✨
+    </p>
+
+    <div class="buttons" id="buttonArea">
+      <button id="yes">Yes ✨</button>
+      <button id="no" aria-label="No">No 🙃</button>
+    </div>
+
+    <p class="tiny">
+      *The Ministry is not responsible for any butterflies, blushing, or suspiciously good chemistry.
+    </p>
+
+    <div class="letter">
+      <p><b>Professor McGonagall's note:</b> “Miss Riya, I strongly recommend selecting Yes.”</p>
+      <p><b>Harry's note:</b> “Honestly, just click Yes. Saves everyone a lot of trouble.”</p>
+    </div>
+  </section>
+</main>
+
+<div class="modal hidden" id="dateModal">
+  <div class="modal-card" id="modalContent">
+    <div class="wand">🪄</div>
+    <h2>Excellent choice, witch! ✨</h2>
+    <p class="lead">Choose your preferred date between <b>18–29 August 2026</b>.</p>
+
+    <div class="choices" id="dateChoices"></div>
+
+    <p style="font-weight:700;margin:20px 0 8px">And what time works for you?</p>
+    <div class="times" id="timeChoices">
+      <button class="time" data-time="6:30 PM">6:30 PM</button>
+      <button class="time" data-time="7:00 PM">7:00 PM</button>
+      <button class="time" data-time="7:30 PM">7:30 PM</button>
+      <button class="time" data-time="8:00 PM">8:00 PM</button>
+      <button class="time" data-time="8:30 PM">8:30 PM</button>
+      <button class="time" data-time="9:00 PM">9:00 PM</button>
+    </div>
+
+    <p style="font-weight:700;margin:20px 0 8px">Pick your magical mission 🧙‍♀️</p>
+    <div class="choices" id="activityChoices">
+      <button class="choice" data-activity="Dinner"><strong>🍝 Dinner</strong><span>Food first. Romance second. Or both.</span></button>
+      <button class="choice" data-activity="Drinks"><strong>🍸 Drinks</strong><span>Butterbeer not guaranteed. Good cocktails are.</span></button>
+      <button class="choice" data-activity="Dessert & Coffee"><strong>🍰 Dessert & Coffee</strong><span>For when we're pretending this is “just coffee”.</span></button>
+      <button class="choice" data-activity="Mini Adventure"><strong>✨ Mini Adventure</strong><span>A little exploring, a little chaos.</span></button>
+    </div>
+
+    <button class="confirm" id="confirm" disabled>Send my owl 🦉</button>
+    <button class="close" id="close">Actually, let me consult the Sorting Hat…</button>
+  </div>
+</div>
+
+<script>
+  // Paste your deployed Google Apps Script Web App URL between the quotes below.
+  const NOTIFY_URL = "PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
+
+  // Decorative stars
+  const stars = document.querySelector('.stars');
+  for(let i=0;i<65;i++){
+    const s=document.createElement('span');
+    s.style.left=Math.random()*100+'%';
+    s.style.top=Math.random()*100+'%';
+    s.style.animationDelay=(Math.random()*3)+'s';
+    s.style.opacity=(.2+Math.random()*.8);
+    stars.appendChild(s);
+  }
+
+  const no = document.getElementById('no');
+  const area = document.getElementById('buttonArea');
+
+  function dodge(){
+    const rect = area.getBoundingClientRect();
+    const btn = no.getBoundingClientRect();
+
+    // Keep the button completely inside the visible button area,
+    // including on narrow phone screens.
+    const padding = 4;
+    const maxX = Math.max(padding, rect.width - btn.width - padding);
+    const minY = -8;
+    const maxY = 55;
+
+    no.style.position='absolute';
+    no.style.left=(padding + Math.random() * Math.max(0, maxX-padding))+'px';
+    no.style.top=(minY + Math.random() * (maxY-minY))+'px';
+    no.style.transform='rotate('+(Math.random()*18-9)+'deg)';
+  }
+
+  // Desktop: move as soon as the finger/mouse approaches.
+  no.addEventListener('mouseenter', dodge);
+
+  // Phones/tablets: a touch on No is intercepted before the click can
+  // happen, so it always escapes instead of accidentally selecting No.
+  no.addEventListener('pointerdown', e => {
+    if (e.pointerType === 'touch' || e.pointerType === 'pen') {
+      e.preventDefault();
+      dodge();
+    }
+  }, {passive:false});
+
+  // Extra fallback for older iPhones/Safari.
+  no.addEventListener('touchstart', e => {
+    e.preventDefault();
+    dodge();
+  }, {passive:false});
+
+  // No can never submit/select anything.
+  no.addEventListener('click', e => {
+    e.preventDefault();
+    e.stopPropagation();
+    dodge();
+  });
+
+  // Also make the button area react to a finger landing very close to No.
+  // This makes the interaction feel playful rather than frustrating on mobile.
+  area.addEventListener('pointermove', e => {
+    if (e.pointerType !== 'mouse') {
+      const r = no.getBoundingClientRect();
+      const distance = Math.hypot(
+        e.clientX - (r.left + r.width/2),
+        e.clientY - (r.top + r.height/2)
+      );
+      if (distance < 55) dodge();
+    }
+  });
+
+  const modal = document.getElementById('dateModal');
+  const dateChoices = document.getElementById('dateChoices');
+  const confirm = document.getElementById('confirm');
+  let selectedDate = '';
+  let selectedTime = '';
+  let selectedActivity = '';
+
+  // 18–29 August 2026
+  const dates = [
+    ['Tue 18 Aug','18 August 2026'], ['Wed 19 Aug','19 August 2026'],
+    ['Thu 20 Aug','20 August 2026'], ['Fri 21 Aug','21 August 2026'],
+    ['Sat 22 Aug','22 August 2026'], ['Sun 23 Aug','23 August 2026'],
+    ['Mon 24 Aug','24 August 2026'], ['Tue 25 Aug','25 August 2026'],
+    ['Wed 26 Aug','26 August 2026'], ['Thu 27 Aug','27 August 2026'],
+    ['Fri 28 Aug','28 August 2026'], ['Sat 29 Aug','29 August 2026']
+  ];
+
+  dates.forEach(([label,value])=>{
+    const b=document.createElement('button');
+    b.className='choice';
+    b.dataset.date=value;
+    b.innerHTML='<strong>'+label+'</strong><span>Available for magical mischief ✨</span>';
+    b.addEventListener('click',()=>{
+      selectedDate=value;
+      document.querySelectorAll('#dateChoices .choice').forEach(x=>x.classList.remove('selected'));
+      b.classList.add('selected');
+      updateConfirm();
+    });
+    dateChoices.appendChild(b);
+  });
+
+  document.querySelectorAll('.time').forEach(b=>{
+    b.addEventListener('click',()=>{
+      selectedTime=b.dataset.time;
+      document.querySelectorAll('.time').forEach(x=>x.classList.remove('selected'));
+      b.classList.add('selected');
+      updateConfirm();
+    });
+  });
+
+  document.querySelectorAll('#activityChoices .choice').forEach(b=>{
+    b.addEventListener('click',()=>{
+      selectedActivity=b.dataset.activity;
+      document.querySelectorAll('#activityChoices .choice').forEach(x=>x.classList.remove('selected'));
+      b.classList.add('selected');
+      updateConfirm();
+    });
+  });
+
+  function updateConfirm(){
+    confirm.disabled=!(selectedDate && selectedTime && selectedActivity);
+  }
+
+  document.getElementById('yes').addEventListener('click',()=>{
+    modal.classList.remove('hidden');
+  });
+
+  document.getElementById('close').addEventListener('click',()=>{
+    modal.classList.add('hidden');
+  });
+
+  confirm.addEventListener('click',()=>{
+    if (!NOTIFY_URL || NOTIFY_URL.includes('PASTE_YOUR_')) {
+      alert('The owl post is not connected yet. Add your Google Apps Script Web App URL first.');
+      return;
+    }
+
+    // Submit through a hidden form/iframe so this also works when the invitation
+    // is hosted somewhere that blocks cross-origin JavaScript responses.
+    const iframe = document.createElement('iframe');
+    iframe.name = 'owlPostFrame_' + Date.now();
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = NOTIFY_URL;
+    form.target = iframe.name;
+    form.style.display = 'none';
+
+    const fields = {
+      date: selectedDate,
+      time: selectedTime,
+      activity: selectedActivity,
+      source: 'Riya Date Invitation'
+    };
+
+    Object.entries(fields).forEach(([name, value]) => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = name;
+      input.value = value;
+      form.appendChild(input);
+    });
+
+    document.body.appendChild(form);
+    form.submit();
+    form.remove();
+
+    setTimeout(() => {
+      document.getElementById('modalContent').innerHTML = `
+        <div class="success">
+          <div class="big">🦉💌</div>
+          <h2>Date officially booked!</h2>
+          <p>Congratulations. You have successfully defeated the No button.</p>
+          <div class="details">
+            <b>📅 ${selectedDate}</b><br>
+            <b>⏰ ${selectedTime}</b><br>
+            <b>✨ ${selectedActivity}</b>
+          </div>
+          <p>
+            <b>Owl successfully delivered. 🦉</b><br>
+            The Ministry has been informed. ❤️
+          </p>
+          <p style="font-size:13px;opacity:.7">
+            P.S. I solemnly swear this is going to be a good time.
+          </p>
+        </div>
+      `;
+      iframe.remove();
+    }, 900);
+  });
+</script>
+</body>
+</html>
