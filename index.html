@@ -345,21 +345,19 @@
       requestId: Date.now().toString()
     });
 
-    const iframe = document.createElement('iframe');
-    iframe.name = 'owlPostGetFrame_' + Date.now();
-    iframe.style.display = 'none';
-    document.body.appendChild(iframe);
-
     const notificationUrl =
       NOTIFY_URL + (NOTIFY_URL.includes('?') ? '&' : '?') + params.toString();
 
-    iframe.src = notificationUrl;
+    // Fire a cross-origin GET without needing CORS access to the response.
+    // The unique requestId above also prevents caching of the request.
+    const owlBeacon = new Image();
+    owlBeacon.src = notificationUrl;
 
     confirm.disabled = true;
     confirm.textContent = 'Sending owl… 🦉';
 
     setTimeout(() => {
-      iframe.remove();
+      owlBeacon.src = '';
 
       document.getElementById('modalContent').innerHTML = `
         <div class="success">
