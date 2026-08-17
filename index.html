@@ -197,7 +197,7 @@
 
 <script>
   // Paste your deployed Google Apps Script Web App URL between the quotes below.
-  const NOTIFY_URL = "https://script.google.com/macros/s/AKfycbxVBAcpEQJfc_w6_oahZPpTERX01tdjnb9c8F6ENrhfWDnkZvgjUK39Q2OLBS-Y0k_wQw/exec";
+  const NOTIFY_URL = "https://script.google.com/macros/s/AKfycbwWCmdWSVYPx8LImV7xw2Ajv7mti3Wx5KFwl_pLtYOLaSPmzzHskg5iDb6UaRDAlp-S7g/exec";
 
   // Decorative stars
   const stars = document.querySelector('.stars');
@@ -335,60 +335,49 @@
       return;
     }
 
-    // Submit through a hidden form/iframe so this also works when the invitation
-    // is hosted somewhere that blocks cross-origin JavaScript responses.
-    const iframe = document.createElement('iframe');
-    iframe.name = 'owlPostFrame_' + Date.now();
-    iframe.style.display = 'none';
-    document.body.appendChild(iframe);
+    if (confirm.disabled) return;
 
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = NOTIFY_URL;
-    form.target = iframe.name;
-    form.style.display = 'none';
-
-    const fields = {
+    const params = new URLSearchParams({
       date: selectedDate,
       time: selectedTime,
       activity: selectedActivity,
-      source: 'Riya Date Invitation'
-    };
-
-    Object.entries(fields).forEach(([name, value]) => {
-      const input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = name;
-      input.value = value;
-      form.appendChild(input);
+      source: 'Riya Date Invitation',
+      requestId: Date.now().toString()
     });
 
-    document.body.appendChild(form);
-    form.submit();
-    form.remove();
+    const iframe = document.createElement('iframe');
+    iframe.name = 'owlPostGetFrame_' + Date.now();
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+
+    const notificationUrl =
+      NOTIFY_URL + (NOTIFY_URL.includes('?') ? '&' : '?') + params.toString();
+
+    iframe.src = notificationUrl;
+
+    confirm.disabled = true;
+    confirm.textContent = 'Sending owl… 🦉';
 
     setTimeout(() => {
+      iframe.remove();
+
       document.getElementById('modalContent').innerHTML = `
         <div class="success">
           <div class="big">🦉💌</div>
-          <h2>Date officially booked!</h2>
-          <p>Congratulations. You have successfully defeated the No button.</p>
+          <h2>Owl successfully delivered!</h2>
+          <p>Your date request has been sent to the Ministry. ❤️</p>
           <div class="details">
             <b>📅 ${selectedDate}</b><br>
             <b>⏰ ${selectedTime}</b><br>
             <b>✨ ${selectedActivity}</b>
           </div>
-          <p>
-            <b>Owl successfully delivered. 🦉</b><br>
-            The Ministry has been informed. ❤️
-          </p>
+          <p><b>I solemnly swear this is going to be a good time. 🪄</b></p>
           <p style="font-size:13px;opacity:.7">
-            P.S. I solemnly swear this is going to be a good time.
+            P.S. The Ministry has been notified. Now we wait for the owl to do its job.
           </p>
         </div>
       `;
-      iframe.remove();
-    }, 900);
+    }, 1500);
   });
 </script>
 </body>
