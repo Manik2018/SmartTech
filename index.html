@@ -198,6 +198,26 @@
 <script>
   // Paste your deployed Google Apps Script Web App URL between the quotes below.
   const NOTIFY_URL = "https://script.google.com/macros/s/AKfycbwWCmdWSVYPx8LImV7xw2Ajv7mti3Wx5KFwl_pLtYOLaSPmzzHskg5iDb6UaRDAlp-S7g/exec";
+  const returnStatus = new URLSearchParams(window.location.search).get('owl');
+  if (returnStatus) {
+    window.history.replaceState({}, document.title, window.location.pathname);
+    window.addEventListener('DOMContentLoaded', () => {
+      const modal = document.getElementById('dateModal');
+      const modalContent = document.getElementById('modalContent');
+      if (returnStatus === 'sent') {
+        modal.classList.remove('hidden');
+        modalContent.innerHTML = `
+          <div class="success">
+            <div class="big">🦉💌</div>
+            <h2>Owl successfully delivered!</h2>
+            <p>Your date request has reached the Ministry. ❤️</p>
+            <p><b>I solemnly swear this is going to be a good time. 🪄</b></p>
+          </div>`;
+      } else {
+        alert('The owl got lost somewhere between Hogwarts and the Ministry. Please try again. 🦉');
+      }
+    });
+  }
 
   // Decorative stars
   const stars = document.querySelector('.stars');
@@ -334,7 +354,6 @@
       alert('The owl post is not connected yet. Add your Google Apps Script Web App URL first.');
       return;
     }
-
     if (confirm.disabled) return;
 
     const params = new URLSearchParams({
@@ -348,34 +367,12 @@
     const notificationUrl =
       NOTIFY_URL + (NOTIFY_URL.includes('?') ? '&' : '?') + params.toString();
 
-    // Fire a cross-origin GET without needing CORS access to the response.
-    // The unique requestId above also prevents caching of the request.
-    const owlBeacon = new Image();
-    owlBeacon.src = notificationUrl;
-
+    // iPhone-safe: use a normal top-level browser navigation instead of a
+    // background cross-origin request. Apps Script will send the email and
+    // redirect back to the GitHub Pages site.
     confirm.disabled = true;
     confirm.textContent = 'Sending owl… 🦉';
-
-    setTimeout(() => {
-      owlBeacon.src = '';
-
-      document.getElementById('modalContent').innerHTML = `
-        <div class="success">
-          <div class="big">🦉💌</div>
-          <h2>Owl successfully delivered!</h2>
-          <p>Your date request has been sent to the Ministry. ❤️</p>
-          <div class="details">
-            <b>📅 ${selectedDate}</b><br>
-            <b>⏰ ${selectedTime}</b><br>
-            <b>✨ ${selectedActivity}</b>
-          </div>
-          <p><b>I solemnly swear this is going to be a good time. 🪄</b></p>
-          <p style="font-size:13px;opacity:.7">
-            P.S. The Ministry has been notified. Now we wait for the owl to do its job.
-          </p>
-        </div>
-      `;
-    }, 1500);
+    window.location.href = notificationUrl;
   });
 </script>
 </body>
