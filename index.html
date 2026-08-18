@@ -327,18 +327,16 @@
       document.querySelectorAll('#dateChoices .choice').forEach(x=>x.classList.remove('selected'));
       b.classList.add('selected');
       selectedTime = '';
-      renderTimeChoices(value);
+      renderTimeChoices(value, weekend);
       updateConfirm();
     });
     dateChoices.appendChild(b);
   });
 
-  function renderTimeChoices(dateValue){
+  function renderTimeChoices(dateValue, isWeekend){
     const container = document.getElementById('timeChoices');
     const hint = document.getElementById('timeHint');
     container.innerHTML = '';
-
-    const isWeekend = dateValue.includes('Sat') || dateValue.includes('Sun');
 
     const times = isWeekend
       ? [
