@@ -168,19 +168,25 @@
   <div class="modal-card" id="modalContent">
     <div class="wand">🪄</div>
     <h2>Excellent choice, witch! ✨</h2>
-    <p class="lead">Choose your preferred date between <b>18–29 August 2026</b>.</p>
+    <p class="lead">Choose a day from <b>21–23 August</b> or <b>28–30 August 2026</b>. ✨
+    <p style="font-size:13px;color:#6e6270;margin:8px 0 0">
+      The Hogwarts Express is unavailable, so we'll have to rely on Muggle transport. 🚂
+    </p></p>
 
+    <div style="margin:4px 0 8px;font-weight:800;font-size:14px">📅 Pick your day</div>
     <div class="choices" id="dateChoices"></div>
+    <p style="font-size:12px;color:#6e6270;margin:10px 0 0">
+      Saturday & Sunday include afternoon and evening options. 🪄<br>The Sorting Hat has approved these hours. No appeals will be accepted. 🎩
+    </p>
 
+    <p style="font-size:13px;color:#6e6270;margin:12px 0 -8px">
+      Choose your preferred Muggle activity. The Ministry has classified all of them as “perfectly reasonable”. ✨
+    </p>
     <p style="font-weight:700;margin:20px 0 8px">And what time works for you?</p>
-    <div class="times" id="timeChoices">
-      <button class="time" data-time="6:30 PM">6:30 PM</button>
-      <button class="time" data-time="7:00 PM">7:00 PM</button>
-      <button class="time" data-time="7:30 PM">7:30 PM</button>
-      <button class="time" data-time="8:00 PM">8:00 PM</button>
-      <button class="time" data-time="8:30 PM">8:30 PM</button>
-      <button class="time" data-time="9:00 PM">9:00 PM</button>
-    </div>
+    <p id="timeHint" style="font-size:13px;color:#6e6270;margin:0 0 10px">
+      Choose a date first and the Time Turner will reveal the available slots. ⏳
+    </p>
+    <div class="times" id="timeChoices"></div>
 
     <p style="font-weight:700;margin:20px 0 8px">Pick your magical mission 🧙‍♀️</p>
     <div class="choices" id="activityChoices">
@@ -212,6 +218,7 @@
             <h2>Owl successfully delivered!</h2>
             <p>Your date request has reached the Ministry. ❤️</p>
             <p><b>I solemnly swear this is going to be a good time. 🪄</b></p>
+          <p style="margin-top:18px"><b>🚗 And don't worry about getting there — I'll send an Uber to pick you up.</b></p>
           </div>`;
       } else {
         alert('The owl got lost somewhere between Hogwarts and the Ministry. Please try again. 🦉');
@@ -295,38 +302,83 @@
   let selectedTime = '';
   let selectedActivity = '';
 
-  // 18–29 August 2026
+  // Two date windows: 21–23 Aug and 28–30 Aug 2026
   const dates = [
-    ['Tue 18 Aug','18 August 2026'], ['Wed 19 Aug','19 August 2026'],
-    ['Thu 20 Aug','20 August 2026'], ['Fri 21 Aug','21 August 2026'],
-    ['Sat 22 Aug','22 August 2026'], ['Sun 23 Aug','23 August 2026'],
-    ['Mon 24 Aug','24 August 2026'], ['Tue 25 Aug','25 August 2026'],
-    ['Wed 26 Aug','26 August 2026'], ['Thu 27 Aug','27 August 2026'],
-    ['Fri 28 Aug','28 August 2026'], ['Sat 29 Aug','29 August 2026']
+    ['Friday 21 Aug','21 August 2026'],
+    ['Saturday 22 Aug','22 August 2026'],
+    ['Sunday 23 Aug','23 August 2026'],
+    ['Friday 28 Aug','28 August 2026'],
+    ['Saturday 29 Aug','29 August 2026'],
+    ['Sunday 30 Aug','30 August 2026']
   ];
 
   dates.forEach(([label,value])=>{
     const b=document.createElement('button');
     b.className='choice';
     b.dataset.date=value;
-    b.innerHTML='<strong>'+label+'</strong><span>Available for magical mischief ✨</span>';
+
+    const weekend = label.startsWith('Saturday') || label.startsWith('Sunday');
+    b.innerHTML =
+      '<strong style="font-size:16px;display:block;margin-bottom:5px">'+label+'</strong>' +
+      '<span>' + (weekend ? 'Saturday/Sunday • Weekend mission ✨' : 'Friday • Evening mission ✨') + '</span>';
+
     b.addEventListener('click',()=>{
       selectedDate=value;
       document.querySelectorAll('#dateChoices .choice').forEach(x=>x.classList.remove('selected'));
       b.classList.add('selected');
+      selectedTime = '';
+      renderTimeChoices(value);
       updateConfirm();
     });
     dateChoices.appendChild(b);
   });
 
-  document.querySelectorAll('.time').forEach(b=>{
-    b.addEventListener('click',()=>{
-      selectedTime=b.dataset.time;
-      document.querySelectorAll('.time').forEach(x=>x.classList.remove('selected'));
-      b.classList.add('selected');
-      updateConfirm();
+  function renderTimeChoices(dateValue){
+    const container = document.getElementById('timeChoices');
+    const hint = document.getElementById('timeHint');
+    container.innerHTML = '';
+
+    const isWeekend = dateValue.includes('Sat') || dateValue.includes('Sun');
+
+    const times = isWeekend
+      ? [
+          ['12:00 PM','Afternoon'],
+          ['1:00 PM','Afternoon'],
+          ['2:00 PM','Afternoon'],
+          ['3:00 PM','Afternoon'],
+          ['4:00 PM','Afternoon'],
+          ['5:00 PM','Early evening'],
+          ['6:00 PM','Evening'],
+          ['7:00 PM','Evening'],
+          ['8:00 PM','Evening'],
+          ['9:00 PM','Evening']
+        ]
+      : [
+          ['7:00 PM','Evening'],
+          ['7:30 PM','Evening'],
+          ['8:00 PM','Evening'],
+          ['8:30 PM','Evening'],
+          ['9:00 PM','Evening']
+        ];
+
+    hint.textContent = isWeekend
+      ? 'Weekend unlocked: afternoon missions are officially permitted. 🪄'
+      : 'Friday evening mission slots — starting at 7 PM. The Ministry recommends punctuality. ⏰';
+
+    times.forEach(([time,label])=>{
+      const b = document.createElement('button');
+      b.className = 'time';
+      b.dataset.time = time;
+      b.innerHTML = `<strong>${time}</strong><br><span style="font-size:11px;opacity:.7">${label}</span>`;
+      b.addEventListener('click',()=>{
+        selectedTime = time;
+        container.querySelectorAll('.time').forEach(x=>x.classList.remove('selected'));
+        b.classList.add('selected');
+        updateConfirm();
+      });
+      container.appendChild(b);
     });
-  });
+  }
 
   document.querySelectorAll('#activityChoices .choice').forEach(b=>{
     b.addEventListener('click',()=>{
