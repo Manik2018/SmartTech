@@ -189,12 +189,7 @@
     <div class="times" id="timeChoices"></div>
 
     <p style="font-weight:700;margin:20px 0 8px">Pick your magical mission 🧙‍♀️</p>
-    <div class="choices" id="activityChoices">
-      <button class="choice" data-activity="Dinner"><strong>🍝 Dinner</strong><span>Food first. Romance second. Or both.</span></button>
-      <button class="choice" data-activity="Drinks"><strong>🍸 Drinks</strong><span>Butterbeer not guaranteed. Good cocktails are.</span></button>
-      <button class="choice" data-activity="Dessert & Coffee"><strong>🍰 Dessert & Coffee</strong><span>For when we're pretending this is “just coffee”.</span></button>
-      <button class="choice" data-activity="Mini Adventure"><strong>✨ Mini Adventure</strong><span>A little exploring, a little chaos.</span></button>
-    </div>
+    <div class="choices" id="activityChoices"></div>
 
     <button class="confirm" id="confirm" disabled>Send my owl 🦉</button>
     <button class="close" id="close">Actually, let me consult the Sorting Hat…</button>
@@ -328,10 +323,56 @@
       b.classList.add('selected');
       selectedTime = '';
       renderTimeChoices(value);
+      renderActivityChoices(value);
       updateConfirm();
     });
     dateChoices.appendChild(b);
   });
+
+
+  function renderActivityChoices(dateValue){
+    const container = document.getElementById('activityChoices');
+    const selectedDay = new Date(dateValue + ' 12:00:00').getDay();
+    const isWeekend = selectedDay === 0 || selectedDay === 6;
+
+    const activities = isWeekend
+      ? [
+          ['🥪 Lunch','Lunch','A perfectly respectable daytime mission. 🍴'],
+          ['🥾 Hike','Hike','Touch grass. Very Muggle. 🌿'],
+          ['🌳 Park & Walk','Park & Walk','A little fresh air and zero dark magic. 🌳'],
+          ['🥞 Brunch','Brunch','Because breakfast deserves a second chance. 🥞'],
+          ['🍦 Ice Cream & Stroll','Ice Cream & Stroll','Cold enough to require a Patronus. 🍦'],
+          ['🍝 Dinner','Dinner','Food first. Decisions later. 🧙‍♂️'],
+          ['🍸 Drinks','Drinks','Butterbeer not guaranteed. Good cocktails are. 🍹'],
+          ['🍰 Dessert & Coffee','Dessert & Coffee','For when we pretend this is “just coffee”. ☕'],
+          ['✨ Mini Adventure','Mini Adventure','A little exploring, a little chaos. ✨']
+        ]
+      : [
+          ['🍝 Dinner','Dinner','Food first. Decisions later. 🧙‍♂️'],
+          ['🍸 Drinks','Drinks','Butterbeer not guaranteed. Good cocktails are. 🍹'],
+          ['🍰 Dessert & Coffee','Dessert & Coffee','For when we pretend this is “just coffee”. ☕'],
+          ['✨ Mini Adventure','Mini Adventure','A little exploring, a little chaos. ✨']
+        ];
+
+    container.innerHTML = '';
+    selectedActivity = '';
+
+    activities.forEach(([label,value,description])=>{
+      const b = document.createElement('button');
+      b.className = 'choice';
+      b.dataset.activity = value;
+      b.innerHTML = '<strong>' + label + '</strong><span>' + description + '</span>';
+
+      b.addEventListener('click',()=>{
+        selectedActivity = value;
+        container.querySelectorAll('.choice').forEach(x=>x.classList.remove('selected'));
+        b.classList.add('selected');
+        updateConfirm();
+      });
+
+      container.appendChild(b);
+    });
+  }
 
   function renderTimeChoices(dateValue){
     const container = document.getElementById('timeChoices');
@@ -380,14 +421,7 @@
     });
   }
 
-  document.querySelectorAll('#activityChoices .choice').forEach(b=>{
-    b.addEventListener('click',()=>{
-      selectedActivity=b.dataset.activity;
-      document.querySelectorAll('#activityChoices .choice').forEach(x=>x.classList.remove('selected'));
-      b.classList.add('selected');
-      updateConfirm();
-    });
-  });
+
 
   function updateConfirm(){
     confirm.disabled=!(selectedDate && selectedTime && selectedActivity);
